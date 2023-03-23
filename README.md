@@ -4,7 +4,7 @@ This repo reproduces the bug reported in https://github.com/newrelic/node-newrel
 
 Based on Newrelic's example node repo
 
-#To Run
+## To Run
 
 Use node 14+
 
@@ -13,7 +13,7 @@ Use node 14+
 
     npm run start
 
-#Example output
+## Example output
 
 
 ```
