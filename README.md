@@ -1,24 +1,51 @@
-<a href="https://opensource.newrelic.com/oss-category/#example-code"><picture><source media="(prefers-color-scheme: dark)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/dark/Example_Code.png"><source media="(prefers-color-scheme: light)" srcset="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Example_Code.png"><img alt="New Relic Open Source example project banner." src="https://github.com/newrelic/opensource-website/raw/main/src/images/categories/Example_Code.png"></picture></a>
+# Purpose
 
-# New Relic Node.js Examples
+This repo reproduces the bug reported in https://github.com/newrelic/node-newrelic-aws-sdk/issues/175
 
-This repository will contain examples of agent features.  Browse the folders for different self-contained, working examples.
+Based on Newrelic's example node repo
 
-## Contribute
+#To Run
 
-We encourage your contributions to improve New Relic Node.js Examples. Please keep in mind that when you submit your pull request, you'll need to sign the CLA via the click-through using CLA-Assistant. You only have to sign the CLA one time per project.
+Use node 14+
 
-If you have any questions, or to execute our corporate CLA (which is required if your contribution is on behalf of a company), drop us an email at opensource@newrelic.com.
+    cd library && npm i && npm link && cd ..
+    cd main && npm link @example/newrelic-node-bug-example-library && npm i
 
-**A note about vulnerabilities**
+    npm run start
 
-As noted in our [security policy](../../security/policy), New Relic is committed to the privacy and security of our customers and their data. We believe that providing coordinated disclosure by security researchers and engaging with the security community are important means to achieve our security goals.
+#Example output
 
-If you believe you have found a security vulnerability in this project or any of New Relic's products or websites, we welcome and greatly appreciate you reporting it to New Relic through [HackerOne](https://hackerone.com/newrelic).
 
-If you would like to contribute to this project, review [these guidelines](./CONTRIBUTING.md).
+```
+> newrelic-node-bug-example-main@1.0.0 start newrelic-node-bug-example/main
+> node -r ./instrumentation index.js
 
-To all contributors, we thank you!  Without your contribution, this project would not be what it is today.
+[NEWRELIC] instrumenting ./nifty-messages
+[NEWRELIC] instrumenting method 'publish'
+[NEWRELIC] instrumenting method 'purge'
+[NEWRELIC] instrumenting callbacks of method 'getMessage'
+[NEWRELIC] instrumenting callbacks of method 'subscribe'
+newrelic-node-bug-example/library/node_modules/@aws-sdk/middleware-stack/dist-cjs/MiddlewareStack.js:130
+                        throw new Error(`Duplicate middleware name '${name}'`);
+                        ^
 
-## License
-New Relic Node.js Examples is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
+Error: Duplicate middleware name 'NewRelicHeader'
+    at Object.add (newrelic-node-bug-example/library/node_modules/@aws-sdk/middleware-stack/dist-cjs/MiddlewareStack.js:130:31)
+    at Object.applyToStack (newrelic-node-bug-example/library/node_modules/@newrelic/aws-sdk/lib/v3/smithy-client.js:33:19)
+    at Object.use (newrelic-node-bug-example/library/node_modules/@aws-sdk/middleware-stack/dist-cjs/MiddlewareStack.js:167:20)
+    at S3Client.wrapShim (newrelic-node-bug-example/library/node_modules/@newrelic/aws-sdk/lib/v3/util.js:33:26)
+    at new WrappedClass (newrelic-node-bug-example/library/node_modules/newrelic/lib/shim/shim.js:2048:30)
+    at new S3Client (newrelic-node-bug-example/library/node_modules/@aws-sdk/client-s3/dist-cjs/S3Client.js:31:9)
+    at new S3StreamLogger (newrelic-node-bug-example/library/node_modules/s3-streamlogger/index.js:69:25)
+    at new Logger (newrelic-node-bug-example/library/log-generator.js:28:23)
+    at Object.<anonymous> (newrelic-node-bug-example/main/index.js:13:1)
+    at Module._compile (internal/modules/cjs/loader.js:1085:14)
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! newrelic-node-bug-example-main@1.0.0 start: `node -r ./instrumentation index.js`
+npm ERR! Exit status 1
+npm ERR! 
+npm ERR! Failed at the newrelic-node-bug-example-main@1.0.0 start script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+```
